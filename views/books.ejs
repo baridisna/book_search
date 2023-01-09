@@ -1,0 +1,92 @@
+<!-- index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Book Search App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  </head>
+
+  <body>
+    <section class="section">
+      <div class="container">
+        <h1 class="title">
+          Book Searh App
+        </h1>
+        <p class="subtitle">
+          Search your book here!
+        </p>
+      </div>
+    </section>
+    <section>
+      <div class="container">
+        <div class="columns">
+          <div class="column is-four-fifths">
+            <% var value_search = q ? q : "" %>
+              <input id="search_text" class="input" type="text" placeholder="Search title or author" value="<%= value_search %>">
+          </div>
+          <div>
+            <button id="button_search" class="button is-info">Search</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <% for(var i = 0; i < books.length; i++) {%>
+          <div class="box">
+            <div class="columns">
+              <div class="column is-one-fifths">
+                <figure>
+                  <% if(books[i].volumeInfo.imageLinks) { %>
+                    <img src=<%= books[i].volumeInfo.imageLinks.thumbnail %>
+                  <% } %>
+                </figure>
+              </div>
+              <div class="column is-four-fifths">
+                <h4 class="title is-4 is-spaced"><%= books[i].volumeInfo.title %></h4>
+                <% if(books[i].volumeInfo.authors) { %>
+                  <p>
+                    <% if (books[i].volumeInfo.authors.length > 1) { %>
+                      <%= books[i].volumeInfo.authors[0] %>
+                      <% for(var j = 1; j < books[i].volumeInfo.authors.length; j++) { %>
+                        ; <%= books[i].volumeInfo.authors[j] %>
+                      <% } %>
+                    <% } else { %>
+                      <%= books[i].volumeInfo.authors[0] %>
+                    <% } %>
+                  </p>
+                <% } %>
+                <% if(books[i].volumeInfo.averageRating) { %>
+                  <div class="rater" data-rate-value=<%= books[i].volumeInfo.averageRating %> ></div>
+                <% } else { %>
+                  <div class="rater" data-rate-value=0></div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </section>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/rater-jquery@1.0.0/rater.min.js"></script>
+    <script>
+      $(".rater").rate({
+        max_value: 5,
+        step_size: 0.5,
+        readonly: true,
+      });
+
+      $('#button_search').click(function() {
+          const url = new URL(window.location)
+          const q = $("#search_text").val();
+          const new_params = new URLSearchParams({"q": q}).toString()
+          const new_url = new URL(`${url.origin}${url.pathname}?${new_params}`);
+          window.location = new_url;
+      });
+
+    </script>
+  </body>
+</html>
