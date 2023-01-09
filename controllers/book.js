@@ -1,7 +1,7 @@
 import request from "request"
 
 export const Home = (req, res) => {
-    res.render('index.ejs')
+    res.get('index.ejs')
 }
 
 export const Book = (req, res) => {
