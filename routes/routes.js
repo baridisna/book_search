@@ -3,7 +3,7 @@ import {Home, Book} from "../controllers/book.js"
 
 const router = express.Router();
 
-router.get('/', Home)
-router.get('/book', Book)
+router.get('/', Book)
+router.get('/book', Home)
 
 export default router;
