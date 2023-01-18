@@ -1,0 +1,80 @@
+<!-- index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Book Search App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+      .content {
+        display:flex;
+        flex-direction:column;
+        justify-content:space-between
+      }
+      .columns .buttons {
+        margin-top: auto;
+      }
+    </style>
+  </head>
+
+  <body>
+    <section class="section">
+      <div class="container">
+        <h1 class="title">
+          Book Wishlist
+        </h1>
+        <p class="subtitle">
+          Your fantastic book to read!
+        </p>
+      </div>
+    </section>
+    <section>
+      <div class="container">
+        <div class="buttons is-right">
+          <a class="button is-danger is-light" href="/book">Cari Buku</a>
+        </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <% for(var i = 0; i < books.length; i++) { %>
+          <div class="box">
+            <div id="col_<%= books[i].book_id %>" class="columns">
+              <div class="column is-one-fifths">
+                <figure>
+                  <% if(books[i].thumbnail) { %>
+                    <img src=<%= books[i].thumbnail %>
+                  <% } %>
+                </figure>
+              </div>
+              <div class="column is-four-fifths content">
+                <h4 class="title is-4 is-spaced"><%= books[i].title %></h4>
+                <% if(books[i].authors) { %>
+                  <p class="authors">
+                      <%= books[i].authors %>
+                  </p>
+                <% } %>
+                <% if(books[i].average_rating) { %>
+                  <div class="rater" data-rate-value=<%= books[i].average_rating %> ></div>
+                <% } else { %>
+                  <div class="rater" data-rate-value=0></div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </section>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/rater-jquery@1.0.0/rater.min.js"></script>
+    <script>
+      $(".rater").rate({
+        max_value: 5,
+        step_size: 0.5,
+        readonly: true,
+      });
+
+    </script>
+  </body>
+</html>
