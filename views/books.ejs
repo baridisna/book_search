@@ -5,6 +5,16 @@
     <meta charset="UTF-8" />
     <title>Book Search App</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+      .content {
+        display:flex;
+        flex-direction:column;
+        justify-content:space-between
+      }
+      .columns .buttons {
+        margin-top: auto;
+      }
+    </style>
   </head>
 
   <body>
@@ -20,6 +30,9 @@
     </section>
     <section>
       <div class="container">
+        <div class="buttons is-right">
+          <a class="button is-danger is-light" href="/wishlist">Lihat Wishlist</a>
+        </div>
         <div class="columns">
           <div class="column is-four-fifths">
             <% var value_search = q ? q : "" %>
@@ -36,7 +49,7 @@
       <div class="container">
         <% for(var i = 0; i < books.length; i++) {%>
           <div class="box">
-            <div class="columns">
+            <div id="col_<%= books[i].id %>" class="columns">
               <div class="column is-one-fifths">
                 <figure>
                   <% if(books[i].volumeInfo.imageLinks) { %>
@@ -44,15 +57,12 @@
                   <% } %>
                 </figure>
               </div>
-              <div class="column is-four-fifths">
+              <div class="column is-four-fifths content">
                 <h4 class="title is-4 is-spaced"><%= books[i].volumeInfo.title %></h4>
                 <% if(books[i].volumeInfo.authors) { %>
-                  <p>
+                  <p class="authors">
                     <% if (books[i].volumeInfo.authors.length > 1) { %>
-                      <%= books[i].volumeInfo.authors[0] %>
-                      <% for(var j = 1; j < books[i].volumeInfo.authors.length; j++) { %>
-                        ; <%= books[i].volumeInfo.authors[j] %>
-                      <% } %>
+                      <%= books[i].volumeInfo.authors.join("; ") %>
                     <% } else { %>
                       <%= books[i].volumeInfo.authors[0] %>
                     <% } %>
@@ -63,6 +73,9 @@
                 <% } else { %>
                   <div class="rater" data-rate-value=0></div>
                 <% } %>
+                <div class="buttons is-right">
+                  <button id="add_<%= books[i].id %>" class="button is-primary wishlist_button">+ Add to wishlist</button>
+                </div>
               </div>
             </div>
           </div>
@@ -86,6 +99,25 @@
           const new_url = new URL(`${url.origin}${url.pathname}?${new_params}`);
           window.location = new_url;
       });
+
+      // add wishlist book
+      $(".wishlist_button").click(function() {
+        let id = $(this).attr('id');
+        let book_id = id.split('_')[1]
+        let data = {
+          "book_id": book_id,
+          "title": $("#col_"+book_id+" h4").text(),
+          "authors": $("#col_"+book_id+" .authors").text().trim(),
+          "average_rating": $("#col_"+book_id+" .rater").attr('data-rate-value'),
+          "thumbnail": $("#col_"+book_id+" img").attr('src')
+        }
+        $.post("api/wishlists/", data, function( res_data ) {
+          console.log(res_data)
+        }).fail(function(response) {
+          console.log(response)
+          alert('Error: ' + response.responseText)
+        })
+      })
 
     </script>
   </body>
